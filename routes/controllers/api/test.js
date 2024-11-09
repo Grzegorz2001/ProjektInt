@@ -1,3 +1,5 @@
-module.exports = function (request, response) {
-    response.send("Działa!");
+module.exports = {
+    newsPage(request, response) {
+        response.send("Aktualności!");
+    },
 };
