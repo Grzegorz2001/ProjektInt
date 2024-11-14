@@ -96,4 +96,19 @@ app.get("/api/posts/flaggedPosts", async (req, res) => {
     }
 });
 
+app.get("/api/posts/:id", async (req, res) => {
+    try {
+        const postID = req.params.id;
+        const post = await Post.findById(postID);
+        if (!post) {
+            return res
+                .status(404)
+                .json({ message: "UPS! Nie moge znaleść tego posta" });
+        }
+        res.json(post);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+});
+
 app.listen(PORT, () => console.log(`Serwer działa! Port: ${PORT}`));
