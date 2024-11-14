@@ -25,7 +25,7 @@ db.on("error", console.error.bind(console, "Błąd połączenia z Mongo:"));
 const postSchema = new mongoose.Schema({
     title: String,
     image: String,
-    publishedDate: String,
+    publishedDate: { type: Date, default: Date.now },
     text: String,
     flag: Boolean,
 });
@@ -45,7 +45,7 @@ app.post("/api/posts", upload.single("image"), async (req, res) => {
         const nowyPost = new Post({
             title: req.body.title,
             image: req.file.path,
-            publishedDate: req.body.publishedDate,
+            publishedDate: new Date(),
             text: req.body.text,
             flag: req.body.flag,
         });
@@ -65,8 +65,6 @@ app.delete("/api/posts/:id", async (req, res) => {
             fs.unlink(post.image, (postNotFound) => {
                 if (postNotFound) {
                     console.error(postNotFound);
-                } else {
-                    alert("Post został usunięty!");
                 }
             });
         }
@@ -80,7 +78,7 @@ app.delete("/api/posts/:id", async (req, res) => {
 
 app.get("/api/posts", async (req, res) => {
     try {
-        const posts = await Post.find();
+        const posts = await Post.find().sort({ publishedDate: -1 });
         res.json(posts);
     } catch (error) {
         res.status(500).json({ message: error.message });
@@ -89,7 +87,9 @@ app.get("/api/posts", async (req, res) => {
 
 app.get("/api/posts/flaggedPosts", async (req, res) => {
     try {
-        const posts = await Post.find({ flag: true });
+        const posts = await Post.find({ flag: true }).sort({
+            publishedDate: -1,
+        });
         res.json(posts);
     } catch (error) {
         res.status(500).json({ message: error.message });
