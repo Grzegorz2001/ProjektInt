@@ -32,6 +32,7 @@ router.post("/", upload.single("image"), async (req, res) => {
 router.put("/:id", upload.single("image"), async (req, res) => {
     try {
         const postID = req.params.id;
+        const oldPost = await Post.findById(postID);
         const updatedPost = await Post.findByIdAndUpdate(
             postID,
             {
@@ -43,6 +44,13 @@ router.put("/:id", upload.single("image"), async (req, res) => {
             },
             { new: true }
         );
+        if (oldPost && oldPost.image) {
+            fs.unlink(oldPost.image, (imageNotFound) => {
+                if (imageNotFound) {
+                    console.error(imageNotFound);
+                }
+            });
+        }
         if (!updatedPost) {
             return res
                 .status(404)
