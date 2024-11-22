@@ -2,6 +2,7 @@ const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
 const postsRoutes = require("./routes/posts.js");
+const kudosRoutes = require("./routes/kudos.js");
 
 const app = express();
 
@@ -21,5 +22,6 @@ const db = mongoose.connection;
 db.on("error", console.error.bind(console, "Błąd połączenia z Mongo:"));
 
 app.use("/api/posts", postsRoutes);
+app.use("/api/kudos", kudosRoutes);
 
 module.exports = app;

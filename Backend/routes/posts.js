@@ -14,15 +14,15 @@ const upload = multer({ storage: storage });
 
 router.post("/", upload.single("image"), async (req, res) => {
     try {
-        const nowyPost = new Post({
+        const newPost = new Post({
             title: req.body.title,
             image: req.file.path,
             publishedDate: new Date(),
             text: req.body.text,
             flag: req.body.flag,
         });
-        await nowyPost.save();
-        res.status(201).json(nowyPost);
+        await newPost.save();
+        res.status(201).json(newPost);
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: error.message });
