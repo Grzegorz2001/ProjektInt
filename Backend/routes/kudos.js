@@ -13,9 +13,22 @@ router.post("/", async (req, res) => {
     }
 });
 
+router.delete("/:id", async (req, res) => {
+    try {
+        const kudosID = req.params.id;
+        const kudos = await Kudos.findByIdAndDelete(kudosID);
+        res.status(204).end();
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: error.message });
+    }
+});
+
 router.get("/latest", async (req, res) => {
     try {
-        const kudos = await Kudos.find().sort({ data: -1 }).limit(3);
+        const kudos = await Kudos.find().limit(3).sort({
+            publishedDate: -1,
+        });
         res.json(kudos);
     } catch (error) {
         console.error(error);
@@ -25,7 +38,9 @@ router.get("/latest", async (req, res) => {
 
 router.get("/", async (req, res) => {
     try {
-        const kudos = await Kudos.find().sort({ data: -1 });
+        const kudos = await Kudos.find().sort({
+            publishedDate: -1,
+        });
         res.json(kudos);
     } catch (error) {
         console.error(error);
