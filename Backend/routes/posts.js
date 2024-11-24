@@ -20,6 +20,7 @@ router.post("/", upload.single("image"), async (req, res) => {
             publishedDate: new Date(),
             text: req.body.text,
             flag: req.body.flag,
+            eventDate: req.body.eventDate ? new Date(req.body.eventDate) : null,
         });
         await newPost.save();
         res.status(201).json(newPost);
@@ -41,6 +42,9 @@ router.put("/:id", upload.single("image"), async (req, res) => {
                 publishedDate: new Date(req.body.publishedDate),
                 text: req.body.text,
                 flag: req.body.flag,
+                eventDate: req.body.eventDate
+                    ? new Date(req.body.eventDate)
+                    : null,
             },
             { new: true }
         );
@@ -95,6 +99,36 @@ router.get("/flaggedPosts", async (req, res) => {
     try {
         const posts = await Post.find({ flag: true }).sort({
             publishedDate: -1,
+        });
+        res.json(posts);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+});
+
+router.get("/datted", async (req, res) => {
+    try {
+        const now = new Date();
+        const posts = await Post.find({
+            $and: [{ eventDate: { $ne: null } }, { eventDate: { $gt: now } }],
+        })
+            .sort({
+                eventDate: 1,
+            })
+            .limit(3);
+        res.json(posts);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+});
+
+router.get("/allDatted", async (req, res) => {
+    try {
+        const now = new Date();
+        const posts = await Post.find({
+            $and: [{ eventDate: { $ne: null } }, { eventDate: { $gt: now } }],
+        }).sort({
+            eventDate: 1,
         });
         res.json(posts);
     } catch (error) {

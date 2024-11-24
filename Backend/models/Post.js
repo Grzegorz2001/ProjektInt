@@ -6,6 +6,7 @@ const postSchema = new mongoose.Schema({
     publishedDate: { type: Date, default: Date.now },
     text: String,
     flag: Boolean,
+    eventDate: { type: Date, default: null },
 });
 
 module.exports = mongoose.model("Post", postSchema);
